@@ -15,13 +15,13 @@ def extract_frames(video_path, output_path):
     frame_count = 0
 
     #read through the videoto make into frames
-    while video.isOpened():
+    while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
             break  # Break the loop if no more frames are available
 
         # Save frame as an image file
-        frame_filename = os.path.join(output_dir, f'frame_{frame_count:04d}.jpg')
+        frame_filename = os.path.join(output_path, f'frame_{frame_count:04d}.jpg')
         cv2.imwrite(frame_filename, frame)
         
         frame_count += 1
@@ -32,7 +32,7 @@ def extract_frames(video_path, output_path):
     
 # function to find the similarity between the different frames
 # to implement the shot boundary detection
-def find_similarity_between_frames(frameA, frameB):
+def histogram_similarity(frameA, frameB):
     histA = cv2.calcHist([frameA], [0, 1, 2], None, [8, 8, 8], [0, 256, 0, 256, 0, 256])
     histB = cv2.calcHist([frameB], [0, 1, 2], None, [8, 8, 8], [0, 256, 0, 256, 0, 256])
     cv2.normalize(histA, histA)
@@ -41,8 +41,8 @@ def find_similarity_between_frames(frameA, frameB):
     return similarity
 
 def ssim_similarity(frameA, frameB):
-    grayA = cv2.cvtColor(imageA, cv2.COLOR_BGR2GRAY)
-    grayB = cv2.cvtColor(imageB, cv2.COLOR_BGR2GRAY)
+    grayA = cv2.cvtColor(frameA, cv2.COLOR_BGR2GRAY)
+    grayB = cv2.cvtColor(frameB, cv2.COLOR_BGR2GRAY)
     score, _ = ssim(grayA, grayB, full=True)
     return score
 
@@ -90,7 +90,12 @@ def segment_video(video_path, hist_threshold=0.85, ssim_threshold=0.5, output_di
     
     
 if __name__ == "__main__":
-    videopath = ""
-    output_frames = "/extracted_frames"
+    video_path = "samplevideo.mp4"
+    output_frames = "./extracted_frames"
+    ouput_segments_dir = "./segements"
+    
+    extract_frames(video_path, output_frames)
+    segment_video(video_path, output_dir="output_segments_dir")
+    
     
     
