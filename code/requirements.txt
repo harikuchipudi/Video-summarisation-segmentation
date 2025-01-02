@@ -1,2 +1,10 @@
-opencv
-tensorflow
+opencv-python
+opencv-python-headless
+numpy
+matplotlib
+torch
+torchvision
+scikit-image
+easyocr
+pillow
+timm
